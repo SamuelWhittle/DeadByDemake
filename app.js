@@ -14,7 +14,6 @@ serv.listen(8080);
 console.log('Server Started.');
 
 var SOCKET_LIST = {};
-var PLAYER_LIST = {};
 
 var NUMBER_LIST = [0, 0, 0, 0, 0];
 
@@ -27,56 +26,68 @@ var NewNumber = function() {
 	}
 }
 
-var Player = function(id){
+var Entity = function() {
 	var self = {
 		x:0,
 		y:0,
-		width:10,
-		height:10,
-		id:id,
-		number:"" + NewNumber(),
-		pressingRight:false,
-		pressingLeft:false,
-		pressingUp:false,
-		pressingDown:false,
-		maxSpd:1,
+		spdX:0,
+		spdY:0,
+		id:"",
 	}
-
-	self.updatePosition = function(){
-		if(self.pressingRight && !inDeadZone(self.x+self.maxSpd, self.y)) {
-			self.x += self.maxSpd;
-			//console.log(self.x += self.maxSpd);
-		}
-		if(self.pressingLeft && !inDeadZone(self.x-self.maxSpd, self.y)) {
-			self.x -= self.maxSpd;
-			//console.log(self.x -= self.maxSpd);
-		}
-		if(self.pressingUp && !inDeadZone(self.x, self.y-self.maxSpd)) {
-			self.y -= self.maxSpd;
-			//console.log(self.y -= self.maxSpd);
-		}
-		if(self.pressingDown && !inDeadZone(self.x, self.y+self.maxSpd)) {
-			self.y += self.maxSpd;
-			//console.log(self.y += self.maxSpd);
-		}
+	self.update = function() {
+		self.updatePosition();
+	}
+	self.updatePosition = function() {
+		self.x += self.spdX;
+		self.y += self.spdY;
 	}
 	return self;
 }
 
-var io = require('socket.io')(serv,{});
-io.sockets.on('connection', function(socket){
-	socket.id = Math.random();
-	SOCKET_LIST[socket.id] = socket;
+var Player = function(id){
+	var self = Entity();
+		self.width = 10;
+		self.height = 10;
+		self.id = id;
+		self.number = "" + NewNumber();
+		self.pressingRight = false;
+		self.pressingLeft = false;
+		self.pressingUp = false;
+		self.pressingDown = false;
+		self.maxSpd = 1;
+	
+	var  super_update = self.update;
+	self.update = function(){
+		self.updateSpd();
+		super_update();
+	}
+	
+	self.updateSpd = function() {
+		if(self.pressingRight)
+			self.spdX = self.maxSpd;
+		else if(self.pressingLeft)
+			self.spdX = -self.maxSpd;
+		else
+			self.spdX = 0;
+		
+		if(self.pressingUp)
+			self.spdY = -self.maxSpd;
+		else if(self.pressingDown)
+			self.spdY = self.maxSpd;
+		else
+			self.spdY = 0;
+	}
+	
+	Player.list[id] = self;
+	
+	return self;
+}
 
+Player.list = {};
+
+Player.onConnect = function(socket) {
 	var player = Player(socket.id);
-	PLAYER_LIST[socket.id] = player;
-
-	socket.on('disconnect',function(){
-		NUMBER_LIST[PLAYER_LIST[socket.id].number] = 0;
-		delete SOCKET_LIST[socket.id];
-		delete PLAYER_LIST[socket.id];
-	});
-
+	
 	socket.on('keyPress',function(data){
 		if(data.inputId === 'left')
 			player.pressingLeft = data.state;
@@ -87,14 +98,18 @@ io.sockets.on('connection', function(socket){
 		else if(data.inputId === 'down')
 			player.pressingDown = data.state;
 	});
+}
 
-});
+Player.onDisconnect = function(socket) {
+	NUMBER_LIST[Player.list[socket.id].number] = 0;
+	delete Player.list[socket.id];
+}
 
-setInterval(function(){
+Player.update = function() {
 	var pack = [];
-	for(var i in PLAYER_LIST){
-		var player = PLAYER_LIST[i];
-		player.updatePosition();
+	for(var i in Player.list){
+		var player = Player.list[i];
+		player.update();
 		pack.push({
 			x:player.x,
 			y:player.y,
@@ -103,7 +118,25 @@ setInterval(function(){
 			number:player.number
 		});
 	}
+	return pack;
+}
 
+var io = require('socket.io')(serv,{});
+io.sockets.on('connection', function(socket){
+	socket.id = Math.random();
+	SOCKET_LIST[socket.id] = socket;
+
+	Player.onConnect(socket);
+	
+	socket.on('disconnect',function(){
+		delete SOCKET_LIST[socket.id];
+		Player.onDisconnect(socket);
+	});
+});
+
+setInterval(function(){
+	var pack = Player.update();
+	
 	for(var i in SOCKET_LIST){
 		var socket = SOCKET_LIST[i];
 		socket.emit('newPositions',pack);
