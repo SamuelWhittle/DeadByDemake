@@ -16,32 +16,31 @@ console.log('Server Started.');
 var SOCKET_LIST = {};
 var PLAYER_LIST = {};
 
-var NUMBER_LIST = [true, true, true, true, true];
+var NUMBER_LIST = [0, 0, 0, 0, 0];
 
 var NewNumber = function() {
 	for(var i in NUMBER_LIST) {
-		if(NUMBER_LIST[i] = true){
+		if(NUMBER_LIST[i] == 0){
+			NUMBER_LIST[i] = 1;
 			return i;
 		}
 	}
 }
 
-var playerNumber = NewNumber();
+//var playerNumber = NewNumber();
 
 var Player = function(id){
 	var self = {
 		x:250,
 		y:250,
 		id:id,
-		number:"" + playerNumber,
+		number:"" + NewNumber(),
 		pressingRight:false,
 		pressingLeft:false,
 		pressingUp:false,
 		pressingDown:false,
 		maxSpd:10,
 	}
-	
-	NUMBER_LIST[playerNumber] = false;
 	
 	self.updatePosition = function(){
 		if(self.pressingRight)// && !collision.inDeadZone(self.x+self.maxSpd, self.y))
@@ -65,6 +64,7 @@ io.sockets.on('connection', function(socket){
 	PLAYER_LIST[socket.id] = player;
 
 	socket.on('disconnect',function(){
+		NUMBER_LIST[PLAYER_LIST[socket.id].number] = 0;
 		delete SOCKET_LIST[socket.id];
 		delete PLAYER_LIST[socket.id];
 	});
