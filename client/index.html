@@ -1,7 +1,14 @@
-<script id="collision" type="/text/javascript/" src="/js/collision.js"></script>
-<canvas id="ctx" width="500" height="500" style="border:1px solid #000000;"></canvas>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="http://localhost:8080/client/css/styles.css">
+</head>
+<body>
+	<canvas class="canvas" id="ctx" width="1280" height="720"></canvas>
+</body>
+</html>
 
 <script src="http://cdn.socket.io/socket.io-1.4.5.js"></script>
+
 <script>
 	var ctx = document.getElementById("ctx").getContext("2d");
 	ctx.font = '30px Arial';
@@ -14,7 +21,7 @@
 	socket.on('newPositions',function(data){
 		ctx.fillStyle = "black"
 		
-		ctx.clearRect(0,0,500,500);
+		ctx.clearRect(0,0,1280,720);
 		
 		ctx.fillRect(20,20,50,50);
 		ctx.fillRect(20,20,31,31)
@@ -23,6 +30,7 @@
 		for(var i = 0; i < data.length; i++){
 			ctx.fillStyle = "orange"
 			ctx.fillRect(data[i].x,data[i].y,data[i].width,data[i].height);
+			//console.log(data[i].x + ", " + data[i].y);
 		}
 	});
 

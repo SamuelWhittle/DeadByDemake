@@ -27,12 +27,10 @@ var NewNumber = function() {
 	}
 }
 
-//var playerNumber = NewNumber();
-
 var Player = function(id){
 	var self = {
-		x:250,
-		y:250,
+		x:0,
+		y:0,
 		width:10,
 		height:10,
 		id:id,
@@ -45,14 +43,22 @@ var Player = function(id){
 	}
 
 	self.updatePosition = function(){
-		if(self.pressingRight && !inDeadZone(self.x+self.maxSpd, self.y))
+		if(self.pressingRight && !inDeadZone(self.x+self.maxSpd, self.y)) {
 			self.x += self.maxSpd;
-		if(self.pressingLeft && !inDeadZone(self.x-self.maxSpd, self.y))
+			//console.log(self.x += self.maxSpd);
+		}
+		if(self.pressingLeft && !inDeadZone(self.x-self.maxSpd, self.y)) {
 			self.x -= self.maxSpd;
-		if(self.pressingUp && !inDeadZone(self.x, self.y-self.maxSpd))
+			//console.log(self.x -= self.maxSpd);
+		}
+		if(self.pressingUp && !inDeadZone(self.x, self.y-self.maxSpd)) {
 			self.y -= self.maxSpd;
-		if(self.pressingDown && !inDeadZone(self.x, self.y+self.maxSpd))
+			//console.log(self.y -= self.maxSpd);
+		}
+		if(self.pressingDown && !inDeadZone(self.x, self.y+self.maxSpd)) {
 			self.y += self.maxSpd;
+			//console.log(self.y += self.maxSpd);
+		}
 	}
 	return self;
 }
@@ -92,6 +98,8 @@ setInterval(function(){
 		pack.push({
 			x:player.x,
 			y:player.y,
+			width:player.width,
+			height:player.height,
 			number:player.number
 		});
 	}
