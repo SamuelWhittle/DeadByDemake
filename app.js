@@ -8,7 +8,7 @@ app.get('/',function(req, res) {
 });
 app.use('/client',express.static(__dirname + '/client'));
 
-serv.listen(2000);
+serv.listen(8080);
 console.log('Server Started.');
 
 var SOCKET_LIST = {};
@@ -82,3 +82,4 @@ setInterval(function(){
 		socket.emit('newPositions',pack);
 	}
 },1000/25);
+
