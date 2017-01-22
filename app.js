@@ -109,7 +109,11 @@ function addDeadZone(x1, y1, x2, y2){
 function cleanup(){
   for(i = 0; i < deadZones.length; i++){
     for(k = i; k < deadZones.length; k++){
-      if()
+      if(deadZones[i] == deadZones[k]){
+        var temp = deadZones[i]
+        removeDeadZone(temp)
+        inDeadZone(temp)
+      }
     }
   }
 }
