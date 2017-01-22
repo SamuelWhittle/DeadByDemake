@@ -40,6 +40,9 @@ var Player = function(id){
 		pressingDown:false,
 		maxSpd:10,
 	}
+	
+	NUMBER_LIST[playerNumber] = false;
+	
 	self.updatePosition = function(){
 		if(self.pressingRight)// && !collision.inDeadZone(self.x+self.maxSpd, self.y))
 			self.x += self.maxSpd;
