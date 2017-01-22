@@ -5,6 +5,14 @@ module.exports = {
     deadZones.push([x1,y1,x2,y2])
   }
 
+  function cleanup(){
+    for(i = 0; i < deadZones.length; i++){
+      for(k = i; k < deadZones.length; k++){
+        if()
+      }
+    }
+  }
+
   function removeDeadZone(x1,y1,x2,y2){
     var temp = [x1,y1,x2,y2]
     for(i = 0; i < deadZones.length; i++){
