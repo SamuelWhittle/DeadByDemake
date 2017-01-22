@@ -3,16 +3,14 @@ var express = require('express');
 var app = express();
 var serv = require('http').Server(app);
 
-app.get('/',function(req, res) { 
+//var collision = require('/js/collision.js')
+
+app.get('/',function(req, res) {
 	res.sendFile(__dirname + '/client/index.html');
 });
 app.use('/client',express.static(__dirname + '/client'));
 
-<<<<<<< HEAD
 serv.listen(8080);
-=======
-serv.listen(80);
->>>>>>> ae20192790ced25de59e7514931e2ffccb4ae39d
 console.log('Server Started.');
 
 var SOCKET_LIST = {};
@@ -31,13 +29,13 @@ var Player = function(id){
 		maxSpd:10,
 	}
 	self.updatePosition = function(){
-		if(self.pressingRight)
+		if(self.pressingRight)// && !collision.inDeadZone(self.x+self.maxSpd, self.y))
 			self.x += self.maxSpd;
-		if(self.pressingLeft)
+		if(self.pressingLeft)// && !collision.inDeadZone(self.x-self.maxSpd, self.y))
 			self.x -= self.maxSpd;
-		if(self.pressingUp)
+		if(self.pressingUp)// && !collision.inDeadZone(self.x, self.y-self.maxSpd))
 			self.y -= self.maxSpd;
-		if(self.pressingDown)
+		if(self.pressingDown)// && !collision.inDeadZone(self.x, self.y+self.maxSpd))
 			self.y += self.maxSpd;
 	}
 	return self;
@@ -47,15 +45,15 @@ var io = require('socket.io')(serv,{});
 io.sockets.on('connection', function(socket){
 	socket.id = Math.random();
 	SOCKET_LIST[socket.id] = socket;
-	
+
 	var player = Player(socket.id);
 	PLAYER_LIST[socket.id] = player;
-	
+
 	socket.on('disconnect',function(){
 		delete SOCKET_LIST[socket.id];
 		delete PLAYER_LIST[socket.id];
 	});
-	
+
 	socket.on('keyPress',function(data){
 		if(data.inputId === 'left')
 			player.pressingLeft = data.state;
@@ -66,7 +64,7 @@ io.sockets.on('connection', function(socket){
 		else if(data.inputId === 'down')
 			player.pressingDown = data.state;
 	});
-	
+
 });
 
 setInterval(function(){
@@ -80,10 +78,9 @@ setInterval(function(){
 			number:player.number
 		});
 	}
-	
+
 	for(var i in SOCKET_LIST){
 		var socket = SOCKET_LIST[i];
 		socket.emit('newPositions',pack);
 	}
 },1000/25);
-
