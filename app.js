@@ -16,12 +16,24 @@ console.log('Server Started.');
 var SOCKET_LIST = {};
 var PLAYER_LIST = {};
 
+var NUMBER_LIST = [true, true, true, true, true];
+
+var NewNumber = function() {
+	for(var i in NUMBER_LIST) {
+		if(NUMBER_LIST[i] = true){
+			return i;
+		}
+	}
+}
+
+var playerNumber = NewNumber();
+
 var Player = function(id){
 	var self = {
 		x:250,
 		y:250,
 		id:id,
-		number:"" + Math.floor(5 * Math.random()),
+		number:"" + playerNumber,
 		pressingRight:false,
 		pressingLeft:false,
 		pressingUp:false,
