@@ -39,17 +39,17 @@ var Player = function(id){
 		pressingLeft:false,
 		pressingUp:false,
 		pressingDown:false,
-		maxSpd:10,
+		maxSpd:1,
 	}
 
 	self.updatePosition = function(){
-		if(self.pressingRight)// && !collision.inDeadZone(self.x+self.maxSpd, self.y))
+		if(self.pressingRight && !inDeadZone(self.x+self.maxSpd, self.y))
 			self.x += self.maxSpd;
-		if(self.pressingLeft)// && !collision.inDeadZone(self.x-self.maxSpd, self.y))
+		if(self.pressingLeft && !inDeadZone(self.x-self.maxSpd, self.y))
 			self.x -= self.maxSpd;
-		if(self.pressingUp)// && !collision.inDeadZone(self.x, self.y-self.maxSpd))
+		if(self.pressingUp && !inDeadZone(self.x, self.y-self.maxSpd))
 			self.y -= self.maxSpd;
-		if(self.pressingDown)// && !collision.inDeadZone(self.x, self.y+self.maxSpd))
+		if(self.pressingDown && !inDeadZone(self.x, self.y+self.maxSpd))
 			self.y += self.maxSpd;
 	}
 	return self;

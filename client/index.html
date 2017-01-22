@@ -12,9 +12,13 @@
 	var random = Math.random();
 
 	socket.on('newPositions',function(data){
+		ctx.fillStyle = "black"
 		ctx.clearRect(0,0,500,500);
+		ctx.fillRect(20,20,31,31)
+		ctx.fillRect(270,270,21,231)
 		for(var i = 0; i < data.length; i++){
-			ctx.fillText(data[i].number,data[i].x,data[i].y);
+			ctx.fillStyle = "orange"
+			ctx.fillRect(data[i].x,data[i].y,10,10);
 		}
 	});
 
