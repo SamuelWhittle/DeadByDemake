@@ -33,6 +33,8 @@ var Player = function(id){
 	var self = {
 		x:250,
 		y:250,
+		width:10,
+		height:10,
 		id:id,
 		number:"" + NewNumber(),
 		pressingRight:false,
