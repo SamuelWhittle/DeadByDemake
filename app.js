@@ -8,7 +8,11 @@ app.get('/',function(req, res) {
 });
 app.use('/client',express.static(__dirname + '/client'));
 
+<<<<<<< HEAD
 serv.listen(8080);
+=======
+serv.listen(80);
+>>>>>>> ae20192790ced25de59e7514931e2ffccb4ae39d
 console.log('Server Started.');
 
 var SOCKET_LIST = {};
